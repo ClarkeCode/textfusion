@@ -1,10 +1,5 @@
 from PIL import Image, ImageDraw, ImageFont
 
-image_width = 300
-image_hight = 300
-image_bg_colour = (255, 255, 255)
-image = Image.new('RGB', (image_width, image_hight), color = image_bg_colour)
-
 def addconstraints(text, constraint_value, thisfont):
         output = ""
         items = text.split()
@@ -20,16 +15,26 @@ def addconstraints(text, constraint_value, thisfont):
                         output = testval
         return output
 
+def createTextImage(phrase, width_limit, selected_font, padding_amount=10, text_colour=(0,0,0), bg_colour=(255,255,255)):
+        phrase_cleaned = addconstraints(phrase, width_limit - 2*padding_amount, selected_font)
+        bounding_box = selected_font.getsize_multiline(phrase_cleaned)
+        text_image = Image.new("RGB", (width_limit, 2*padding_amount+bounding_box[1]), bg_colour)
+        image_draw = ImageDraw.Draw(text_image)
+        image_draw.text((padding_amount,0), phrase_cleaned, font=selected_font, fill=text_colour)
+        return text_image
+
+def fuseImageVertically(topImage, bottomImage):
+        fused_image = Image.new("RGB", (max(topImage.width, bottomImage.width), topImage.height + bottomImage.height))
+        fused_image.paste(topImage, (0,0))
+        fused_image.paste(bottomImage, (0, topImage.height))
+        return fused_image
+
 font_name = 'Fonts/OpenSans-Regular.ttf'
 font_size = 28
-font_colour = (0, 0, 0)
 selectedfont = ImageFont.truetype(font_name, font_size)
-imagedraw = ImageDraw.Draw(image)
+phrase = "The quick brown fox jumped over the lazy dog"
 
-phrase = "The quick brown fox jumped over the lazy dog The quick brown fox jumped over the lazy dog"
-phrase_cleaned = addconstraints(phrase, image_width, selectedfont)
-imagedraw.text((10,10), phrase_cleaned, font=selectedfont, fill=font_colour)
+input_image = Image.open("input.png")
+text_image = createTextImage(phrase, input_image.width, selectedfont)
 
-image.save('output.png')
-
-
+fuseImageVertically(text_image, input_image).save('output.png')
