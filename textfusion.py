@@ -29,12 +29,25 @@ def fuseImageVertically(topImage, bottomImage):
         fused_image.paste(bottomImage, (0, topImage.height))
         return fused_image
 
-font_name = 'Fonts/OpenSans-Regular.ttf'
-font_size = 28
-selectedfont = ImageFont.truetype(font_name, font_size)
-phrase = "The quick brown fox jumped over the lazy dog"
 
-input_image = Image.open("input.png")
-text_image = createTextImage(phrase, input_image.width, selectedfont)
 
-fuseImageVertically(text_image, input_image).save('output.png')
+if __name__ == "__main__":
+        import argparse
+        parser = argparse.ArgumentParser(
+                #usage="%(prog)s [OPTIONS] MESSAGE INPUT [OUTPUT]",
+                description="Fuse any provided text with the indicated image")
+        parser.add_argument(
+                "-v", "--version", action="version",
+                version = f"{parser.prog} version 0.1.0")
+        parser.add_argument("message")
+        parser.add_argument("inputfilename")
+        parser.add_argument("outputfilename", nargs="?", default="output.png")
+        parser.add_argument("-s", "--fontsize", type=int, default=30)
+        parser.add_argument("-f", "--fontname", default="Fonts/OpenSans-Regular.ttf")
+        
+        args = parser.parse_args()
+        
+        selectedfont = ImageFont.truetype(args.fontname, args.fontsize)
+        input_image = Image.open(args.inputfilename)
+        text_image = createTextImage(args.message, input_image.width, selectedfont)
+        fuseImageVertically(text_image, input_image).save(args.outputfilename)
