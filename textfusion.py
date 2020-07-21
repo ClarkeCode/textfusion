@@ -29,7 +29,11 @@ def fuseImageVertically(topImage, bottomImage):
         fused_image.paste(bottomImage, (0, topImage.height))
         return fused_image
 
-
+def textFusion(message, baseimgname, outputname, textpadding, fontname, fontsize, fontcolour, bgcolour):
+        selected_font = ImageFont.truetype(fontname, fontsize)
+        input_image = Image.open(baseimgname)
+        text_image = createTextImage(message, input_image.width, selected_font, textpadding, fontcolour, bgcolour)
+        fuseImageVertically(text_image, input_image).save(outputname)
 
 if __name__ == "__main__":
         import argparse
@@ -38,7 +42,7 @@ if __name__ == "__main__":
                 description="Fuse any provided text with the indicated image")
         parser.add_argument(
                 "-v", "--version", action="version",
-                version = f"{parser.prog} version 0.1.0")
+                version=f"{parser.prog} version 0.1.0")
         parser.add_argument("message")
         parser.add_argument("inputfilename")
         parser.add_argument("outputfilename", nargs="?", default="output.png")
@@ -46,13 +50,10 @@ if __name__ == "__main__":
         parser.add_argument("-f", "--fontname", default="Fonts/OpenSans-Regular.ttf")
 
         parser.add_argument("-tbg", "--textbackgroundrgb", nargs=3, type=int, default=[255,255,255])
-        parser.add_argument("-fc", "--fontcolour", nargs=3, type=int, default=[0,0,0]) 
-        
+        parser.add_argument("-fc", "--fontcolour", nargs=3, type=int, default=[0,0,0])
+        parser.add_argument("-p", "--padding", type=int, default=20)
         
         args = parser.parse_args()
-        print(args)
         
-        selectedfont = ImageFont.truetype(args.fontname, args.fontsize)
-        input_image = Image.open(args.inputfilename)
-        text_image = createTextImage(args.message, input_image.width, selectedfont)
-        fuseImageVertically(text_image, input_image).save(args.outputfilename)
+        textFusion(args.message, args.inputfilename, args.outputfilename, args.padding,
+                   args.fontname, args.fontsize, tuple(args.fontcolour), tuple(args.textbackgroundrgb))
