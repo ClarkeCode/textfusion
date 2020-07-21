@@ -44,8 +44,13 @@ if __name__ == "__main__":
         parser.add_argument("outputfilename", nargs="?", default="output.png")
         parser.add_argument("-s", "--fontsize", type=int, default=30)
         parser.add_argument("-f", "--fontname", default="Fonts/OpenSans-Regular.ttf")
+
+        parser.add_argument("-tbg", "--textbackgroundrgb", nargs=3, type=int, default=[255,255,255])
+        parser.add_argument("-fc", "--fontcolour", nargs=3, type=int, default=[0,0,0]) 
+        
         
         args = parser.parse_args()
+        print(args)
         
         selectedfont = ImageFont.truetype(args.fontname, args.fontsize)
         input_image = Image.open(args.inputfilename)
