@@ -29,7 +29,8 @@ def fuseImageVertically(topImage, bottomImage):
         fused_image.paste(bottomImage, (0, topImage.height))
         return fused_image
 
-def textFusion(message, baseimgname, outputname, textpadding, fontname, fontsize, fontcolour, bgcolour):
+def textFusion(message, baseimgname, outputname="output.png", textpadding=20,
+               fontname="Fonts/OpenSans-Regular.ttf", fontsize=30, fontcolour=[0,0,0], bgcolour=[255,255,255]):
         selected_font = ImageFont.truetype(fontname, fontsize)
         input_image = Image.open(baseimgname)
         text_image = createTextImage(message, input_image.width, selected_font, textpadding, fontcolour, bgcolour)
@@ -46,14 +47,18 @@ if __name__ == "__main__":
         parser.add_argument("message")
         parser.add_argument("inputfilename")
         parser.add_argument("outputfilename", nargs="?", default="output.png")
-        parser.add_argument("-s", "--fontsize", type=int, default=30)
+        parser.add_argument("-s", "--fontsize", type=int, default=30,
+                            help="Size of the text message (default: %(default)s)")
         parser.add_argument("-f", "--fontname", default="Fonts/OpenSans-Regular.ttf")
 
-        parser.add_argument("-tbg", "--textbackgroundrgb", nargs=3, type=int, default=[255,255,255])
-        parser.add_argument("-fc", "--fontcolour", nargs=3, type=int, default=[0,0,0])
-        parser.add_argument("-p", "--padding", type=int, default=20)
+        parser.add_argument("-bg", "--backgroundrgb", nargs=3, type=int, default=[255,255,255],
+                            help="Colour of the text background (default: 255 255 255)")
+        parser.add_argument("-fc", "--fontcolour", nargs=3, type=int, default=[0,0,0],
+                            help="Colour of the text message (default: 0 0 0)")
+        parser.add_argument("-p", "--padding", type=int, default=20,
+                            help="Padding added to the text message (default: %(default)s)")
         
         args = parser.parse_args()
         
         textFusion(args.message, args.inputfilename, args.outputfilename, args.padding,
-                   args.fontname, args.fontsize, tuple(args.fontcolour), tuple(args.textbackgroundrgb))
+                   args.fontname, args.fontsize, tuple(args.fontcolour), tuple(args.backgroundrgb))
